@@ -1,30 +1,53 @@
 import React from 'react';
-import { SafeAreaView, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react-native';
+import {
+    SafeAreaView,
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    Image,
+    Platform,
+    Dimensions,
+} from 'react-native';
+
+import { Feather } from '@expo/vector-icons';
 
 import WateringImage from '../../assets/watering.png';
 import colors from '../../styles/colors';
+import fonts from '../../styles/fonts';
 
 export default function Welcome() {
  return (
    <SafeAreaView style={styles.container}>
-       <Text style={styles.title}>
-           Gerencie {'\n'}
-           suas plantas {'\n'}
-           de forma fácil
-        </Text>
+       <View style={styles.wrapper}>
+            <Text style={styles.title}>
+                Gerencie {'\n'}
+                suas plantas de {'\n'}
+                forma fácil
+                </Text>
 
-       <Image source={WateringImage} style={styles.image} resizeMode='contain'/>
+            <Image 
+                source={WateringImage} 
+                style={styles.image}
+                resizeMode='contain'
+            />
 
-       <Text style={styles.subtitle}>
-           Não esqueça mais de regar suas plantas. 
-           Nós cuidamos de lembrar você sempre que precisar.
-        </Text>
-
-        <TouchableOpacity style={styles.button} activeOpacity={0.7}>
-            <Text style={styles.buttonText}>
-                {">"}
+            <Text style={styles.subtitle}>
+                Não esqueça mais de regar suas plantas. 
+                Nós cuidamos de lembrar você sempre que precisar.
             </Text>
-        </TouchableOpacity>
+
+            <TouchableOpacity 
+                style={styles.button} 
+                activeOpacity={0.7}
+            >
+                <Feather 
+                    name='chevron-right' 
+                    size={36} 
+                    color={colors.white}
+                />
+            </TouchableOpacity>
+        </View>
    </SafeAreaView>
   );
 }
@@ -33,25 +56,31 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: Platform.OS === 'ios' ? 0 : 30,
+    },
+    wrapper:{
+        flex: 1,
         justifyContent: 'space-around',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingHorizontal: 15,
     },
     title:{
-        fontSize: 32,
+        fontFamily: fonts.heading,
+        fontSize: 28,
         fontWeight: 'bold',
         color: colors.heading,
         textAlign: 'center',
-        marginTop: 25,
+        marginTop: 38,
+        lineHeight: 34,
     },
     subtitle:{
+        fontFamily: fonts.text,
         textAlign: 'center',
         fontSize: 18,
         paddingHorizontal: 20,
         color: colors.heading,
     },
     image:{
-        width: 292,
-        height: 284
+        height: Dimensions.get('window').width * 0.7,
     },
     button:{
         backgroundColor: colors.green,
