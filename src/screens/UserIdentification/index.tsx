@@ -9,6 +9,7 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import Button from '../../components/Button';
 
@@ -16,6 +17,8 @@ import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
 
 export default function UserIdentification(){
+    const navigation = useNavigation();
+
     const [isFocused, setIsFocused] = useState(false);
     const [isFilled, setIsFilled] = useState(false);
     const [name, setName] = useState<string>();
@@ -62,11 +65,10 @@ export default function UserIdentification(){
                                 onFocus={handleInputFocus}
                                 onChangeText={(text) => handleInputChange(text)}
                                 value={name}
-                            
                             />
 
                             <View style={styles.footer}>
-                                <Button title="Confirmar" onPress={() => alert('clicou')}/>
+                                <Button title="Confirmar" onPress={() => navigation.navigate('Confirmation')}/>
                             </View>
                         </View>
                     </View>

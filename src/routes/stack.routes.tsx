@@ -1,7 +1,4 @@
 import React from 'react';
-import {
-
-} from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import colors from '../styles/colors';
@@ -12,8 +9,15 @@ import Confirmation from '../screens/Confirmation';
 
 const stackRoutes = createStackNavigator();
 
-const StackRoutes = () => (
-    <stackRoutes.Navigator>
+const StackRoutes: React.FC = () => (
+    <stackRoutes.Navigator
+        headerMode='none'
+        screenOptions={{
+            cardStyle:{
+                backgroundColor: colors.white
+            }
+        }}
+    >
         <stackRoutes.Screen 
             name="Welcome" 
             component={Welcome}
