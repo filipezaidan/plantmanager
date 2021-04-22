@@ -5,6 +5,7 @@ import {
     View,
     Text,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import Button from '../../components/Button';
 
@@ -12,6 +13,8 @@ import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
 
 export default function Confirmation(){
+    const navigation = useNavigation();
+
     return(
         <SafeAreaView style={styles.container}>
             <View style={styles.content}>
@@ -29,7 +32,10 @@ export default function Confirmation(){
                 </Text>
 
                 <View style={styles.footer}>
-                    <Button title="Acessar"/>
+                    <Button 
+                        title="Acessar"
+                        onPress={() => navigation.navigate('PlantSelect')}
+                    />
                 </View>
             </View>
 
