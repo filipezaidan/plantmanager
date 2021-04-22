@@ -10,6 +10,7 @@ import {
 import EnvironmentButton from '../../components/EnvironmentButton';
 import Header from '../../components/Header';
 import PlantCardPrimary from '../../components/PlantCardPrimary';
+import Load from '../../components/Load';
 
 import api from '../../services/api';
 import colors from '../../styles/colors';
@@ -36,6 +37,23 @@ interface PlantProps{
 export default function PlantSelect(){
     const [environment, setEnvironment] = useState<EnvironmentProps[]>([]);
     const [plants, setPlants] = useState<PlantProps[]>([]);
+    const [filteredplants, setFilteredPlants] = useState<PlantProps[]>([]);
+    const [environmentSelect, setEnvironmentSelect] = useState('all');
+    const [loading, setLoading] = useState(true);
+
+    function handleEnvironmentSelect(environment: string){
+        setEnvironmentSelect(environment);
+
+        if(environment === 'all'){
+            return setFilteredPlants(plants);
+        }
+
+        const filtered = plants.filter(plant =>
+            plant.environments.includes(environment)
+        );
+
+        setFilteredPlants(filtered);
+    }
 
     useEffect( () => {
         async function fetchEnvironment(){
@@ -56,9 +74,15 @@ export default function PlantSelect(){
             const { data } = await api
             .get('plants?_sort=name&_order=asc');
             setPlants(data);
+            setFilteredPlants(data)
+            setLoading(false);
         }
         fecthPlants();
     },[])
+
+    if(loading){
+        return <Load/>
+    }
 
     return(
         <SafeAreaView style={styles.container}>
@@ -77,7 +101,13 @@ export default function PlantSelect(){
                 <FlatList
                     data={environment}
                     renderItem={
-                        ({ item }) => <EnvironmentButton title={item.title} key={item.key} /> 
+                        ({ item }) => 
+                        <EnvironmentButton 
+                        title={item.title} 
+                        key={item.key} 
+                        active={item.key == environmentSelect}
+                        onPress={ () => handleEnvironmentSelect(item.key)}
+                        /> 
                     }
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -87,11 +117,10 @@ export default function PlantSelect(){
 
             <View style={styles.plants}>
                 <FlatList
-                    data={plants}
+                    data={filteredplants}
                     renderItem={ ({item}) => <PlantCardPrimary data={item}/>}
                     numColumns={2} 
-                    contentContainerStyle={styles.contentContainer}
-                    showsHorizontalScrollIndicator={false}               
+                    showsVerticalScrollIndicator={false}               
                 />
             </View>
         </SafeAreaView>
@@ -130,7 +159,4 @@ const styles = StyleSheet.create({
         paddingHorizontal: 32,
         justifyContent: 'center',
     },
-    contentContainer:{
-
-    }
 });
