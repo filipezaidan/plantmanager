@@ -6,6 +6,8 @@ import {
     SafeAreaView,
 } from 'react-native';
 
+import EnviromentButton from '../../components/EnviromentButton';
+
 import Header from '../../components/Header';
 import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
@@ -24,6 +26,8 @@ export default function PlantSelect(){
                     você quer colocar sua planta?
                 </Text>
             </View>
+
+            <EnviromentButton title='Cozinha' />
         </SafeAreaView>
     );
 }
