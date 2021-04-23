@@ -5,6 +5,7 @@ import {
     StyleSheet,
     SafeAreaView,
     FlatList,
+    ActivityIndicator,
 } from 'react-native';
 
 import EnvironmentButton from '../../components/EnvironmentButton';
@@ -15,6 +16,7 @@ import Load from '../../components/Load';
 import api from '../../services/api';
 import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
+import { color } from 'react-native-reanimated';
 
 interface EnvironmentProps{
     title: string;
@@ -41,6 +43,11 @@ export default function PlantSelect(){
     const [environmentSelect, setEnvironmentSelect] = useState('all');
     const [loading, setLoading] = useState(true);
 
+    const [page, setPage] = useState(1);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [loadedAll, setLoadedAll] = useState(false);
+
+    //Filters
     function handleEnvironmentSelect(environment: string){
         setEnvironmentSelect(environment);
 
@@ -55,6 +62,39 @@ export default function PlantSelect(){
         setFilteredPlants(filtered);
     }
 
+    //Paginate and return values
+    function handleFecthMore(distance: number ){
+        if(distance < 1){
+            return;
+        }
+
+        setLoadingMore(true);
+        setPage(oldValue => oldValue + 1);
+        fecthPlants();
+    }
+
+    //Get Plants
+    async function fecthPlants(){
+        const { data } = await api
+        .get(`plants?_sort=name&_order=asc&_page=${page}&_limit=8`);
+
+        if(!data){
+            return setLoading(true)
+        }
+        
+        if(page > 1){
+            setPlants(oldValue => [...oldValue, ...data])
+            setFilteredPlants(oldValue => [...oldValue, ...data])
+        }else{
+            setPlants(data);
+            setFilteredPlants(data)
+            
+        }
+        setLoading(false);
+        setLoadingMore(false);
+    }
+
+
     useEffect( () => {
         async function fetchEnvironment(){
             const { data } = await api
@@ -67,16 +107,6 @@ export default function PlantSelect(){
             ]);
         }
         fetchEnvironment();
-    },[])
-
-    useEffect( () => {
-        async function fecthPlants(){
-            const { data } = await api
-            .get('plants?_sort=name&_order=asc');
-            setPlants(data);
-            setFilteredPlants(data)
-            setLoading(false);
-        }
         fecthPlants();
     },[])
 
@@ -120,7 +150,15 @@ export default function PlantSelect(){
                     data={filteredplants}
                     renderItem={ ({item}) => <PlantCardPrimary data={item}/>}
                     numColumns={2} 
-                    showsVerticalScrollIndicator={false}               
+                    showsVerticalScrollIndicator={false}
+                    onEndReachedThreshold={0.1}
+                    onEndReached={ ({ distanceFromEnd }) => 
+                        handleFecthMore(distanceFromEnd) 
+                    }
+                    ListFooterComponent={
+                        loadingMore ? 
+                            <ActivityIndicator color={colors.green}/> : <></>
+                    }              
                 />
             </View>
         </SafeAreaView>
