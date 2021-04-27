@@ -7,6 +7,7 @@ import {
     FlatList,
     ActivityIndicator,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import EnvironmentButton from '../../components/EnvironmentButton';
 import Header from '../../components/Header';
@@ -16,7 +17,6 @@ import Load from '../../components/Load';
 import api from '../../services/api';
 import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
-import { color } from 'react-native-reanimated';
 
 interface EnvironmentProps{
     title: string;
@@ -37,6 +37,8 @@ interface PlantProps{
 }
 
 export default function PlantSelect(){
+    const navigation = useNavigation();
+
     const [environment, setEnvironment] = useState<EnvironmentProps[]>([]);
     const [plants, setPlants] = useState<PlantProps[]>([]);
     const [filteredplants, setFilteredPlants] = useState<PlantProps[]>([]);
@@ -45,7 +47,11 @@ export default function PlantSelect(){
 
     const [page, setPage] = useState(1);
     const [loadingMore, setLoadingMore] = useState(false);
-    const [loadedAll, setLoadedAll] = useState(false);
+
+    function handlePlantSelect(plant: PlantProps){
+        navigation.navigate('PlantSave', { plant });
+
+    }
 
     //Filters
     function handleEnvironmentSelect(environment: string){
@@ -130,6 +136,7 @@ export default function PlantSelect(){
             <View>
                 <FlatList
                     data={environment}
+                    keyExtractor={(item)=> item.key}
                     renderItem={
                         ({ item }) => 
                         <EnvironmentButton 
@@ -148,7 +155,13 @@ export default function PlantSelect(){
             <View style={styles.plants}>
                 <FlatList
                     data={filteredplants}
-                    renderItem={ ({item}) => <PlantCardPrimary data={item}/>}
+                    keyExtractor={(item)=> String(item.id)}
+                    renderItem={ ({item}) => 
+                        <PlantCardPrimary 
+                            data={item}
+                            onPress={() => handlePlantSelect(item)}
+                        />
+                    }
                     numColumns={2} 
                     showsVerticalScrollIndicator={false}
                     onEndReachedThreshold={0.1}
