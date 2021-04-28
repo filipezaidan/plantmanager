@@ -13,6 +13,7 @@ import { useRoute } from '@react-navigation/native';
 import { SvgFromUri } from 'react-native-svg';
 import DateTimePicker, { Event } from '@react-native-community/datetimepicker';
 import { isBefore, format } from 'date-fns';
+import { PlantProps, savePlant } from '../../libs/storage';
 
 import Button from '../../components/Button';
 
@@ -21,20 +22,8 @@ import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
 
 interface Params {
-    plant: {
-        id: string,
-        name: string,
-        about: string,
-        water_tips: string,
-        photo: string,
-        environments: [string],
-        frequency: {
-            times: number,
-            repeat_every: string  
-        }
-    }
+    plant: PlantProps
 }
-
 
 export default function PlantSave(){
     const route = useRoute();
@@ -59,6 +48,17 @@ export default function PlantSave(){
 
     function handleOpenDateTimePickerAndroid(){
         setShowDatePicker(oldValue => !oldValue);
+    }
+
+    async function handleSave(){
+        try{
+            await savePlant({
+                ...plant,
+                dataTimeNotification: selectDateTime
+            })
+        }catch{
+            alert('Não foi possivel salvar planta!')
+        }
     }
 
     return(
@@ -120,7 +120,7 @@ export default function PlantSave(){
 
                 <Button
                     title='Cadastrar Planta'
-                    onPress={ () => {}}
+                    onPress={handleSave}
                 />
             </View>
         </SafeAreaView>
