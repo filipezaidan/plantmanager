@@ -43,7 +43,13 @@ export default function UserIdentification(){
         }
         try{
             await AsyncStorage.setItem('@plantmanager:username', name);
-            navigation.navigate('Confirmation');
+            navigation.navigate('Confirmation', {
+                title: 'Protinho',
+                subtitle: 'Agora vamos começar a cuida das suas plantinhas com muito cuidado.',
+                buttonTitle: 'Comecar',
+                icon: 'smile',
+                nextScreen: 'PlantSelect'
+            });
         }catch{
             Alert.alert('Não foi possivel salvar o seu nome! :(');
         }

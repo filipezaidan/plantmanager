@@ -9,11 +9,11 @@ import {
     Platform,
 } from 'react-native';
 
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { SvgFromUri } from 'react-native-svg';
 import DateTimePicker, { Event } from '@react-native-community/datetimepicker';
 import { isBefore, format } from 'date-fns';
-import { PlantProps, savePlant } from '../../libs/storage';
+import { loadPlant, PlantProps, savePlant } from '../../libs/storage';
 
 import Button from '../../components/Button';
 
@@ -26,6 +26,7 @@ interface Params {
 }
 
 export default function PlantSave(){
+    const navigation = useNavigation();
     const route = useRoute();
     const { plant } = route.params as Params;
 
@@ -54,8 +55,16 @@ export default function PlantSave(){
         try{
             await savePlant({
                 ...plant,
-                dataTimeNotification: selectDateTime
-            })
+                dateTimeNotification: selectDateTime
+            });
+
+            navigation.navigate('Confirmation', {
+                title: 'Tudo certo',
+                subtitle: 'Fique tranquilo que sempre iremos lembrar você de cuidar da sua plantinha com muito cuidadado' ,
+                buttonTitle: 'Muito obrigado!' ,
+                icon: 'hug',
+                nextScreen: 'MyPlants',
+            });
         }catch{
             alert('Não foi possivel salvar planta!')
         }
