@@ -12,15 +12,13 @@ import {
 import { formatDistance } from 'date-fns';
 import { ptBR} from 'date-fns/locale';
 
+import { loadPlant, PlantProps, removePlant } from '../../libs/storage';
 import Header from '../../components/Header';
-
-import { loadPlant, PlantProps, removePlant, StoragePlantProps } from '../../libs/storage';
-import colors from '../../styles/colors';
-import Waterdrop from '../../assets/waterdrop.png';
-import PlantCardSecondary from '../../components/PlantCardSecondary';
-import fonts from '../../styles/fonts';
 import Load from '../../components/Load';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import PlantCardSecondary from '../../components/PlantCardSecondary';
+import colors from '../../styles/colors';
+import fonts from '../../styles/fonts';
+import Waterdrop from '../../assets/waterdrop.png';
 
 export default function MyPlants(){
     const [myPlants, setMyPlants] = useState<PlantProps[]>([]);
@@ -51,28 +49,28 @@ export default function MyPlants(){
         ])
     }
 
-    useEffect( () => {
-        async function loadStorageData(){
+    useEffect(() => {
+        async function loadStorageData() {
             const plantsStoraged = await loadPlant();
 
-            const nexTime = formatDistance(
-                new Date(plantsStoraged[0].dateTimeNotification).getTime(),
+            const nextTime = formatDistance(
+                new Date(plantsStoraged[0].dateTimeNotification).getTime(), 
                 new Date().getTime(),
-                { locale: ptBR}
+                { locale: ptBR }
             );
 
             setNextWatered(
-                `Não esquecaça de regar a ${plantsStoraged[0].name} à ${nexTime}  horas.`
-            );
+                `Não esqueça de regar a ${plantsStoraged[0].name} às ${nextTime}`
+            )
+
             setMyPlants(plantsStoraged);
             setLoading(false);
         }
-        loadStorageData();
-    },[])
 
-    if(loading){
-        return <Load/>
-    }
+        loadStorageData();
+    }, []);
+
+
 
     return(
         <View style={styles.container}>
@@ -104,7 +102,6 @@ export default function MyPlants(){
                         />
                     )}
                     showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{flex: 1}}
                 />
             </View>
         </View>

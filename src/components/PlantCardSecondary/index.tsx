@@ -71,7 +71,6 @@ export default function PlantCardSecondary({data, handleRemove, ...rest}: PlantP
 
 const styles = StyleSheet.create({
     container: {
-    
         width: '100%',
         paddingHorizontal: 10,
         paddingVertical: 25,
@@ -113,6 +112,4 @@ const styles = StyleSheet.create({
         right: 5,
         borderRadius: 12
     }
- 
-
 });
