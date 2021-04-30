@@ -8,11 +8,11 @@ export interface PlantProps {
     water_tips: string;
     photo: string;
     environments: [string];
-    hour: string;
     frequency: {
         times: number;
         repeat_every: string;
-    },
+    };
+    hour: string;
     dateTimeNotification: Date;
 }
 

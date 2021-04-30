@@ -5,33 +5,72 @@ import {
     Text,
     Image,
     FlatList,
+    Alert,
 } from 'react-native';
 
-import { formatDistance, format } from 'date-fns';
+import { formatDistance } from 'date-fns';
 import { ptBR} from 'date-fns/locale';
 
 import Header from '../../components/Header';
 
-import { loadPlant, PlantProps } from '../../libs/storage';
+import { loadPlant, PlantProps, StoragePlantProps } from '../../libs/storage';
 import colors from '../../styles/colors';
 import Waterdrop from '../../assets/waterdrop.png';
 import PlantCardSecondary from '../../components/PlantCardSecondary';
 import fonts from '../../styles/fonts';
+import Load from '../../components/Load';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MyPlants(){
     const [myPlants, setMyPlants] = useState<PlantProps[]>([]);
     const [loading, setLoading] = useState(true);
     const [nextWatered, setNextWatered] = useState<string>();
 
+    function handleRemove(plant: PlantProps){
+        Alert.alert('Remover', `Deseja remover a ${plant.name}?`, [
+            {
+                text: 'Nao 🙏',
+                style: 'cancel'
+            },
+
+            {
+                text: 'Sim 😢',
+                onPress: async () => {
+                    try{
+                        const data =await AsyncStorage.getItem('@plantmanger:plants');
+                        const plants = data ? (JSON.parse(data) as StoragePlantProps) : {};
+                        
+                        delete plants[plant.id];
+
+                        await AsyncStorage.setItem(
+                            '@plantmanger:plants',
+                            JSON.stringify(plants)
+                        );
+
+                        setMyPlants( (oldData) => (
+                            oldData.filter((item) => item.id !== plant.id)
+                        ));
+
+                    }catch (error){
+
+                    }
+                }
+            }
+        ])
+    }
+
     useEffect( () => {
         async function loadStorageData(){
             const plantsStoraged = await loadPlant();
-            console.log(plantsStoraged)
 
-          
+            const nexTime = formatDistance(
+                new Date(plantsStoraged[0].dateTimeNotification).getTime(),
+                new Date().getTime(),
+                { locale: ptBR}
+            );
 
             setNextWatered(
-                `Não esquecaça de regar a ${plantsStoraged[0].name} à  horas.`
+                `Não esquecaça de regar a ${plantsStoraged[0].name} à ${nexTime}  horas.`
             );
             setMyPlants(plantsStoraged);
             setLoading(false);
@@ -39,10 +78,9 @@ export default function MyPlants(){
         loadStorageData();
     },[])
 
-
-    
-
-
+    if(loading){
+        return <Load/>
+    }
 
     return(
         <View style={styles.container}>
@@ -65,14 +103,16 @@ export default function MyPlants(){
                 </Text>
 
                 <FlatList
-                data={myPlants}
-                keyExtractor={ (item) => String(item.id)}
-                renderItem={({ item }) => (
-                    <PlantCardSecondary data={item}/>
-                )}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{flex: 1}}
-                
+                    data={myPlants}
+                    keyExtractor={ (item) => String(item.id)}
+                    renderItem={({ item }) => (
+                        <PlantCardSecondary 
+                        data={item}
+                        handleRemove={ () => handleRemove(item)}
+                        />
+                    )}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{flex: 1}}
                 />
             </View>
         </View>
