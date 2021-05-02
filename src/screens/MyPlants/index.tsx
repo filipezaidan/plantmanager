@@ -24,6 +24,7 @@ export default function MyPlants(){
     const [myPlants, setMyPlants] = useState<PlantProps[]>([]);
     const [loading, setLoading] = useState(true);
     const [nextWatered, setNextWatered] = useState<string>();
+    
 
     function handleRemove(plant: PlantProps){
         Alert.alert('Remover', `Deseja remover a ${plant.name}?`, [
@@ -53,6 +54,11 @@ export default function MyPlants(){
         async function loadStorageData() {
             const plantsStoraged = await loadPlant();
 
+            if(plantsStoraged.length === 0){
+                setLoading(false);
+                return;
+            }
+
             const nextTime = formatDistance(
                 new Date(plantsStoraged[0].dateTimeNotification).getTime(), 
                 new Date().getTime(),
@@ -62,14 +68,32 @@ export default function MyPlants(){
             setNextWatered(
                 `Não esqueça de regar a ${plantsStoraged[0].name} às ${nextTime}`
             )
-
             setMyPlants(plantsStoraged);
             setLoading(false);
         }
-
         loadStorageData();
     }, []);
 
+    if(loading){
+        return(
+            <Load/>
+        );
+
+    }
+
+    if(myPlants.length === 0){
+        return(
+            <View style={styles.container}>
+                <Header/>
+
+                <View style={styles.plants}>
+                    <Text style={styles.plantsTitle}>
+                        Sem plantas cadastradas...
+                    </Text>
+                </View>
+            </View>
+        )
+    }
 
 
     return(
