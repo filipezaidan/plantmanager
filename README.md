@@ -1,6 +1,6 @@
 
 <h1 align="center">
-  <img width="450px" src="./.github/assets/icon.svg" />
+  <img width="450px" src="https://github.com/filipezaidan/plantmanager/blob/main/assets/icon.png" />
   <br />
 </h1>
 <p align="center">
