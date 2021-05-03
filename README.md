@@ -1,6 +1,6 @@
 
 <h1 align="center">
-  <img width="450px" src="./.github/assets/logo.svg" />
+  <img width="450px" src="./.github/assets/icon.svg" />
   <br />
 </h1>
 <p align="center">
